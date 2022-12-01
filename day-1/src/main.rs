@@ -1,5 +1,6 @@
 use std::{fs::File, io::{BufReader, BufRead}};
 
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Elf {
     calories: i32,
 }
@@ -23,13 +24,10 @@ fn main() -> std::io::Result<()> {
         }
     }
 
-    let most_calories = elves.iter()
-    .reduce( |accum, item| {
-        if accum.calories >= item.calories { accum } else { item }
-    }).unwrap()
-    .calories;
+    elves.sort();
+    let elves: Vec<&Elf> = elves.iter().rev().collect();
 
-    println!("{most_calories} calories");
+    println!("The elves with the most calories have {}, {}, and {} calories for a total of {}", elves[0].calories, elves[1].calories, elves[2].calories, elves[0].calories + elves[1].calories + elves[2].calories);
 
     Ok(())
 }
