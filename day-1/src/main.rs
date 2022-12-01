@@ -1,6 +1,5 @@
 use std::{fs::File, io::{BufReader, BufRead}};
 
-#[derive(Debug)]
 struct Elf {
     calories: i32,
 }
