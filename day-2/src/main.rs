@@ -1,12 +1,11 @@
 use std::{fs::File, io::{BufReader, BufRead}};
 
-#[derive(Debug)]
 struct Match {
     player: Move,
     opponent: Move,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 enum Move {
     Rock,
     Paper,
