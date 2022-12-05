@@ -18,7 +18,7 @@ fn priority(item: char) -> u32 {
 }
 
 fn main() -> std::io::Result<()> {
-    let file = File::open("SecondaryFiles/fake_input.txt")?;
+    let file = File::open("SecondaryFiles/input.txt")?;
     let reader = BufReader::new(file);
 
     let bags: Vec<Bag> = reader.lines()
@@ -50,32 +50,38 @@ fn main() -> std::io::Result<()> {
     })
     .sum();
 
-    let file = File::open("SecondaryFiles/fake_input.txt")?;
+    let file = File::open("SecondaryFiles/input.txt")?;
     let reader = BufReader::new(file);
 
-    let mut count = 0;
-    let mut seen = vec![HashSet::new()];
-    let part2 = reader.lines()
-    .fold( 0, | acc, line | {
+    let mut index = 0;
+    let mut buffer: Vec<HashSet<char>> = Vec::new();
+    let part2: u32 = reader.lines()
+    .map( | line | {
+        index += 1;
         let line = line.unwrap();
-        count += 1;
-        seen.push(HashSet::new());
-        let _: Vec<bool> = line.chars()
-        .map( | letter | seen[count].insert(letter))
-        .collect();
-        if count % 3 == 0 {
+        let mut output = 0;
+        let mut chars = HashSet::new();
+        line.chars()
+        .for_each( | letter | {
+            chars.insert(letter);
+        });
+        buffer.push(chars);
+        if index % 3 == 0 {
             let mut temp = HashSet::new();
-            let _: Vec<bool> = seen[count - 2].intersection(&seen[count - 1])
-            .map( | item | temp.insert(*item))
-            .collect();
-            acc + temp.intersection(&seen[count])
-            .fold( 0, | acc, item | {
-                acc + priority(*item)
-            })
+            buffer[2].intersection(&buffer[1])
+            .for_each( | letter | {
+                temp.insert(*letter);
+            });
+            let badge: &char = temp.intersection(&buffer[0])
+            .collect::<Vec<&char>>()
+            .first()
+            .unwrap();
+            output = priority(*badge);
+            buffer = Vec::new();
         }
-        else { 0 }
-    });
-
+        output
+    })
+    .sum();
 
     println!("Part 1: {part1}");
     println!("Part 2: {part2}");
