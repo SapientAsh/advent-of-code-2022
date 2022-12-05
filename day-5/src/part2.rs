@@ -59,7 +59,7 @@ pub fn main() -> String {
             let crate_ = rev_crates[instruction.src - 1].pop().unwrap();
             stack.push(crate_);
         }
-        rev_crates[instruction.det  - 1].append(
+        rev_crates[instruction.det - 1].append(
             &mut stack.into_iter().rev().collect()
         );
     }
