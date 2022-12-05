@@ -45,7 +45,6 @@ fn main() -> std::io::Result<()> {
         .rev()
         .collect();
     }
-    println!("{:?}", rev_crates[0]);
     
     let moves: Vec<Move> = reader_iter
     .map( | line | {
