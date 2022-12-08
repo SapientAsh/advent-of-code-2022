@@ -1,15 +1,7 @@
 use std::{fs::File, io::{BufReader, BufRead, Lines}};
 
-//struct Directory {
-//    size: i32,
-//}
-
 fn directory_size(reader: &mut Lines<BufReader<File>>, list: &mut Vec<i32>) -> i32 {
     let mut size: i32 = 0;
-    //let name = String::from(reader.next()
-    //.unwrap().unwrap()
-    //.split(" ")
-    //.collect::<Vec<&str>>()[1]);
 
     loop {
         let line = reader.next();
