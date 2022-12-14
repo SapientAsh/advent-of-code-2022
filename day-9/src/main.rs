@@ -18,47 +18,52 @@ struct Point {
     y: i32,
 }
 
+impl Point {
+    fn new(x: i32, y: i32) -> Self {
+        Point {
+            x: x,
+            y: y,
+        }
+    }
+}
+
 fn distance(h: Point, t: Point) -> f32 {
     ((h.x - t.x).pow(2) as f32 + (h.y - t.y).pow(2) as f32).ceil()
 }
 
-fn evaluate_move((head, tail): (&mut Point, &mut Point), dir: &Move, set: &mut HashSet<Point>) {
-    for _ in 0..dir.distance {
-        match dir.direction {
-            Direction::Up => head.y += 1,
-            Direction::Down => head.y -= 1,
-            Direction::Left => head.x -= 1,
-            Direction::Right => head.x += 1,
+fn move_rope(rope: &mut [Point], set: &mut [HashSet::<Point>]) {
+    if rope[0].y - rope[1].y > 1 && rope[0].x == rope[1].x { rope[1].y += 1 }
+    else if rope[0].y - rope[1].y < -1 && rope[0].x == rope[1].x { rope[1].y -= 1 }
+    else if rope[0].x - rope[1].x > 1 && rope[0].y == rope[1].y { rope[1].x += 1 }
+    else if rope[0].x - rope[1].x < -1 && rope[0].y == rope[1].y { rope[1].x -= 1 }
+    else if distance(rope[0], rope[1]) > 2.0 {
+        if rope[0].y > rope[1].y && rope[0].x > rope[1].x {
+            rope[1].x += 1;
+            rope[1].y += 1;
         }
-
-        if head.y - tail.y > 1 && head.x == tail.x { tail.y += 1 }
-        else if head.y - tail.y < -1 && head.x == tail.x { tail.y -= 1 }
-        else if head.x - tail.x > 1 && head.y == tail.y { tail.x += 1 }
-        else if head.x - tail.x < -1 && head.y == tail.y { tail.x -= 1 }
-        else if distance(*head, *tail) > 2.0 {
-            if head.y > tail.y && head.x > tail.x {
-                tail.x += 1;
-                tail.y += 1;
-            }
-            else if head.y > tail.y && head.x < tail.x {
-                tail.x -= 1;
-                tail.y += 1;
-            }
-            else if head.y < tail.y && head.x > tail.x {
-                tail.x += 1;
-                tail.y -= 1;
-            }
-            else if head.y < tail.y && head.x < tail.x {
-                tail.x -= 1;
-                tail.y -= 1;
-            }
+        else if rope[0].y > rope[1].y && rope[0].x < rope[1].x {
+            rope[1].x -= 1;
+            rope[1].y += 1;
         }
+        else if rope[0].y < rope[1].y && rope[0].x > rope[1].x {
+            rope[1].x += 1;
+            rope[1].y -= 1;
+        }
+        else if rope[0].y < rope[1].y && rope[0].x < rope[1].x {
+            rope[1].x -= 1;
+            rope[1].y -= 1;
+        }
+    }
 
-        set.insert(*tail);
+    set[1].insert(rope[1]);
+    if rope.len() > 2 {
+        move_rope(&mut rope[1..], &mut set[1..])
     }
 }
 
 fn main() -> std::io::Result<()> {
+    const ROPE_LENGTH: usize = 10;
+
     let file = File::open("SecondaryFiles/input.txt")?;
     let reader = BufReader::new(file);
 
@@ -80,19 +85,24 @@ fn main() -> std::io::Result<()> {
     })
     .collect();
 
-    let mut visited = HashSet::<Point>::new();
-    let (mut head, mut tail) = (
-        Point { x: 0, y: 0 },
-        Point { x: 0, y: 0 },
-    );
+    let mut rope = vec![Point::new(0, 0); ROPE_LENGTH];
+    let mut visited = vec![HashSet::<Point>::new(); ROPE_LENGTH];
 
     moves.iter()
     .for_each( | dir | {
-        evaluate_move((&mut head, &mut tail), dir, &mut visited);
+        for _ in 0..dir.distance {
+            match dir.direction {
+                Direction::Up => rope[0].y += 1,
+                Direction::Down => rope[0].y -= 1,
+                Direction::Left => rope[0].x -= 1,
+                Direction::Right => rope[0].x += 1,
+            }
+            move_rope(&mut rope, &mut visited);
+        }
     });
 
-    let part1 = visited.len();
-    println!("Part1: {part1}");
+    let part1 = visited[ROPE_LENGTH - 1].len();
+    println!("Part 1: {part1}");
 
     Ok(())
 }
