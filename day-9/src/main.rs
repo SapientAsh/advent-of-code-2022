@@ -101,8 +101,10 @@ fn main() -> std::io::Result<()> {
         }
     });
 
-    let part1 = visited[ROPE_LENGTH - 1].len();
+    let part1 = visited[1].len();
+    let part2 = visited[ROPE_LENGTH - 1].len();
     println!("Part 1: {part1}");
+    println!("Part 2: {part2}");
 
     Ok(())
 }
